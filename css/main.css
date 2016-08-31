@@ -1,0 +1,39 @@
+@charset "UTF-8";
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 17-ao├╗t-2016, 21:39:31
+    Author     : queni
+*/
+html {
+  /*box-sizing: border-box;*/
+  box-sizing: content-box; }
+
+.grid {
+  margin: auto;
+  margin-top: 40px;
+  display: table;
+  background-color: red; }
+
+.row {
+  display: table-row;
+  background-color: blue; }
+
+.cell {
+  padding: 20px;
+  /*padding: 10px;*/
+  /*margin: 20px;*/
+  width: 80px;
+  height: 80px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 200%;
+  /*font-size: 50%;*/
+  /*font-size: 400%;*/
+  display: table-cell;
+  background-color: green; }
+
+/*# sourceMappingURL=main.css.map */
