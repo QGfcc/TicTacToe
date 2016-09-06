@@ -9,7 +9,7 @@ function TicTacToe() {
   var horizontalCellNumber = 3;
   var verticalCellNumber = 3;
   var cellInARowToWin = 3;
-  var cellsEl = [
+  var cellsEl = [//TODO gen from rows number
     [
       $("#cell1"),
       $("#cell2"),
@@ -24,7 +24,7 @@ function TicTacToe() {
       $("#cell9")
     ]
   ];
-  var cellsVal = [
+  var cellsVal = [//TODO gen from rows number
     [
       undefined,
       undefined,
@@ -126,6 +126,64 @@ function TicTacToe() {
     }
     return false;
   };
+  var checkWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber) {
+//    var counter = 0;
+//    var winnableCoord = [];
+    var winnableCoord = undefined;
+    var emptySlotsNumber;
+//    var lowestEmptySlotsNumber = lastLowestEmptySlotsNumber | (cellInARowToWin + 1);// to get at least 1 empty line
+    var lowestEmptySlotsNumber = typeof lastLowestEmptySlotsNumber !== 'undefined' ? lastLowestEmptySlotsNumber : (cellInARowToWin + 1);// to get at least 1 empty line
+
+    var stillOk = true;
+    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
+      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
+        emptySlotsNumber = 0;
+        stillOk = true;
+        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+          if (cellsVal[i + k][j + k] === undefined) {
+            emptySlotsNumber++;
+            if (emptySlotsNumber >= lowestEmptySlotsNumber) {
+              stillOk = false;
+            }
+          } else if (cellsVal[i + k][j + k] !== expectedValue) {
+            stillOk = false;
+          }
+        }
+        if (stillOk) {
+          lowestEmptySlotsNumber = emptySlotsNumber;
+          console.log(i + " " + j);//TODO delete
+          if (emptySlotsNumber === 0) {
+            winnableCoord = {
+              missingSlots: emptySlotsNumber,
+              x: [],
+              y: []
+            };
+            for (var k = 0; k < cellInARowToWin; k++) {
+              winnableCoord['x'].push(i + k);
+              winnableCoord['y'].push(j + k);
+            }
+            return winnableCoord;
+
+          } else {
+            winnableCoord = {
+              missingSlots: emptySlotsNumber,
+              x: [],
+              y: []
+            };
+            for (var k = 0; k < cellInARowToWin; k++) {
+              if (cellsVal[i + k][j + k] === undefined) {
+                winnableCoord['x'].push(i + k);
+                winnableCoord['y'].push(j + k);
+//                break;//TODO delete maybe
+              }
+            }
+          }
+
+        }
+      }
+    }
+    return winnableCoord;
+  };
   var checkWinDiagonalTopRight = function (expectedValue) {
     var stillOk = true;
     for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
@@ -145,6 +203,7 @@ function TicTacToe() {
   };
   var checkWinDiagonal = function (expectedValue) {
     return    checkWinDiagonalTopLeft(expectedValue) ||
+//    return    !!checkWinnableDiagonalTopLeft(expectedValue, 0) || //TODO change
         checkWinDiagonalTopRight(expectedValue);
   };
   var checkWinHorizontal = function (expectedValue) {
@@ -196,6 +255,8 @@ function TicTacToe() {
     var vert = checkWinVertical(expectedValue);
     var diag = checkWinDiagonal(expectedValue);
     var isOver = isComplete();
+    //TODO get win location
+
     console.log("___" + expectedValue + "___");//TODO delete
     console.log("hor : " + hor);
     console.log("vert : " + vert);
@@ -213,7 +274,7 @@ function TicTacToe() {
     }
   };
   var endingAnimation = function () {
-
+//TODO do
   };
   var swapFirstPlayer = function () {
     isUserFirstPlayer = !isUserFirstPlayer;
@@ -325,6 +386,27 @@ function TicTacToe() {
 //  console.log('diag');
 //  console.log('o : ' + checkWinDiagonal('o'));
 //  console.log('x : ' + checkWinDiagonal('x'));
+
+  cellsVal = [
+    [
+      'o',
+      undefined,
+      'x'
+    ], [
+      undefined,
+      undefined,
+      undefined
+    ], [
+      'x',
+      'o',
+      undefined
+    ]
+  ];
+  console.log('diag');
+//  console.log('o : ' + checkWinnableDiagonalTopLeft('o'));
+  console.log(checkWinnableDiagonalTopLeft('o', 3));
+//  console.log('x : ' + checkWinnableDiagonalTopLeft('x'));
+  console.log(checkWinnableDiagonalTopLeft('x'));
 
 
 }
