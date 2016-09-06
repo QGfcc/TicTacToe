@@ -108,44 +108,24 @@ function TicTacToe() {
       }
     }
   };
-  var checkWinDiagonalTopLeft = function (expectedValue) {
-//    var counter = 0;
-    var stillOk = true;
-    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
-        stillOk = true;
-        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-          if (cellsVal[i + k][j + k] !== expectedValue) {
-            stillOk = false;
-          }
-        }
-        if (stillOk) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-  var checkWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber) {
-//    var counter = 0;
-//    var winnableCoord = [];
+
+  var checkWinnable = function (expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection) {
     var winnableCoord = undefined;
     var emptySlotsNumber;
-//    var lowestEmptySlotsNumber = lastLowestEmptySlotsNumber | (cellInARowToWin + 1);// to get at least 1 empty line
     var lowestEmptySlotsNumber = typeof lastLowestEmptySlotsNumber !== 'undefined' ? lastLowestEmptySlotsNumber : (cellInARowToWin + 1);// to get at least 1 empty line
+    var stillOk;//TODO Init maybe
 
-    var stillOk = true;
-    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
+    for (var i = YStartingPoint; i < YEndingPoint; i++) {
+      for (var j = XStartingPoint; j < XEndingPoint; j++) {
         emptySlotsNumber = 0;
         stillOk = true;
         for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-          if (cellsVal[i + k][j + k] === undefined) {
+          if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] === undefined) {
             emptySlotsNumber++;
             if (emptySlotsNumber >= lowestEmptySlotsNumber) {
               stillOk = false;
             }
-          } else if (cellsVal[i + k][j + k] !== expectedValue) {
+          } else if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] !== expectedValue) {
             stillOk = false;
           }
         }
@@ -155,25 +135,25 @@ function TicTacToe() {
           if (emptySlotsNumber === 0) {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-              x: [],
-              y: []
+              y: [],
+              x: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
-              winnableCoord['x'].push(i + k);
-              winnableCoord['y'].push(j + k);
+              winnableCoord['y'].push(i + (YCheckDirection * k));
+              winnableCoord['x'].push(j + (XCheckDirection * k));
             }
             return winnableCoord;
 
           } else {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-              x: [],
-              y: []
+              y: [],
+              x: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
-              if (cellsVal[i + k][j + k] === undefined) {
-                winnableCoord['x'].push(i + k);
-                winnableCoord['y'].push(j + k);
+              if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] === undefined) {
+                winnableCoord['y'].push(i + (YCheckDirection * k));
+                winnableCoord['x'].push(j + (XCheckDirection * k));
 //                break;//TODO delete maybe
               }
             }
@@ -184,62 +164,182 @@ function TicTacToe() {
     }
     return winnableCoord;
   };
-  var checkWinDiagonalTopRight = function (expectedValue) {
-    var stillOk = true;
-    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-      for (var j = cellInARowToWin - 1; j < cellsVal.length; j++) {
-        stillOk = true;
-        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-          if (cellsVal[i + k][j - k] !== expectedValue) {
-            stillOk = false;
-          }
-        }
-        if (stillOk) {
-          return true;
-        }
-      }
-    }
-    return false;
+  var checkWinnableHorizontalFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+    var XStartingPoint = 0;
+    var YStartingPoint = 0;
+    var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var YEndingPoint = cellsVal.length;
+    var XCheckDirection = 1;
+    var YCheckDirection = 0;
+
+    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+
   };
-  var checkWinDiagonal = function (expectedValue) {
-    return    checkWinDiagonalTopLeft(expectedValue) ||
-//    return    !!checkWinnableDiagonalTopLeft(expectedValue, 0) || //TODO change
-        checkWinDiagonalTopRight(expectedValue);
+  var checkWinnableVerticalFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+    var XStartingPoint = 0;
+    var YStartingPoint = 0;
+    var XEndingPoint = cellsVal.length;
+    var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var XCheckDirection = 0;
+    var YCheckDirection = 1;
+
+    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+
   };
-  var checkWinHorizontal = function (expectedValue) {
-    var stillOk = true;
-    for (var i = 0; i < cellsVal.length; i++) {
-      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
-        stillOk = true;
-        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-          if (cellsVal[i][j + k] !== expectedValue) {
-            stillOk = false;
-          }
-        }
-        if (stillOk) {
-          return true;
-        }
-      }
-    }
-    return false;
+  var checkWinnableDiagonalTopLeftFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+    var XStartingPoint = 0;
+    var YStartingPoint = 0;
+    var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var XCheckDirection = 1;
+    var YCheckDirection = 1;
+
+    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+
   };
-  var checkWinVertical = function (expectedValue) {
-    var stillOk = true;
-    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-      for (var j = 0; j < cellsVal.length; j++) {
-        stillOk = true;
-        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-          if (cellsVal[i + k][j] !== expectedValue) {
-            stillOk = false;
-          }
-        }
-        if (stillOk) {
-          return true;
-        }
-      }
-    }
-    return false;
+  var checkWinnableDiagonalTopRightFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+    var XStartingPoint = cellInARowToWin - 1;
+    var YStartingPoint = 0;
+    var XEndingPoint = cellsVal.length;
+    var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var XCheckDirection = -1;
+    var YCheckDirection = 1;
+
+    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+
   };
+//  var checkWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber) {
+////    var counter = 0;
+////    var winnableCoord = [];
+//    var winnableCoord = undefined;
+//    var emptySlotsNumber;
+////    var lowestEmptySlotsNumber = lastLowestEmptySlotsNumber | (cellInARowToWin + 1);// to get at least 1 empty line
+//    var lowestEmptySlotsNumber = typeof lastLowestEmptySlotsNumber !== 'undefined' ? lastLowestEmptySlotsNumber : (cellInARowToWin + 1);// to get at least 1 empty line
+//
+//    var stillOk = true;//TODO unInit
+//    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
+//      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
+//        emptySlotsNumber = 0;
+//        stillOk = true;
+//        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+//          if (cellsVal[i + k][j + k] === undefined) {
+//            emptySlotsNumber++;
+//            if (emptySlotsNumber >= lowestEmptySlotsNumber) {
+//              stillOk = false;
+//            }
+//          } else if (cellsVal[i + k][j + k] !== expectedValue) {
+//            stillOk = false;
+//          }
+//        }
+//        if (stillOk) {
+//          lowestEmptySlotsNumber = emptySlotsNumber;
+//          console.log(i + " " + j);//TODO delete
+//          if (emptySlotsNumber === 0) {
+//            winnableCoord = {
+//              missingSlots: emptySlotsNumber,
+//              x: [],
+//              y: []
+//            };
+//            for (var k = 0; k < cellInARowToWin; k++) {
+//              winnableCoord['y'].push(i + k);
+//              winnableCoord['x'].push(j + k);
+//            }
+//            return winnableCoord;
+//
+//          } else {
+//            winnableCoord = {
+//              missingSlots: emptySlotsNumber,
+//              x: [],
+//              y: []
+//            };
+//            for (var k = 0; k < cellInARowToWin; k++) {
+//              if (cellsVal[i + k][j + k] === undefined) {
+//                winnableCoord['y'].push(i + k);
+//                winnableCoord['x'].push(j + k);
+////                break;//TODO delete maybe
+//              }
+//            }
+//          }
+//
+//        }
+//      }
+//    }
+//    return winnableCoord;
+//  };
+//  var checkWinDiagonalTopLeft = function (expectedValue) {
+////    var counter = 0;
+//    var stillOk = true;
+//    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
+//      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
+//        stillOk = true;
+//        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+//          if (cellsVal[i + k][j + k] !== expectedValue) {
+//            stillOk = false;
+//          }
+//        }
+//        if (stillOk) {
+//          return true;
+//        }
+//      }
+//    }
+//    return false;
+//  };
+//  var checkWinDiagonalTopRight = function (expectedValue) {
+//    var stillOk = true;
+//    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
+//      for (var j = cellInARowToWin - 1; j < cellsVal.length; j++) {
+//        stillOk = true;
+//        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+//          if (cellsVal[i + k][j - k] !== expectedValue) {
+//            stillOk = false;
+//          }
+//        }
+//        if (stillOk) {
+//          return true;
+//        }
+//      }
+//    }
+//    return false;
+//  };
+//  var checkWinDiagonal = function (expectedValue) {
+//    return    checkWinDiagonalTopLeft(expectedValue) ||
+////    return    !!checkWinnableDiagonalTopLeft(expectedValue, 0) || //TODO change
+//        checkWinDiagonalTopRight(expectedValue);
+//  };
+//  var checkWinHorizontal = function (expectedValue) {
+//    var stillOk = true;
+//    for (var i = 0; i < cellsVal.length; i++) {
+//      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
+//        stillOk = true;
+//        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+//          if (cellsVal[i][j + k] !== expectedValue) {
+//            stillOk = false;
+//          }
+//        }
+//        if (stillOk) {
+//          return true;
+//        }
+//      }
+//    }
+//    return false;
+//  };
+//  var checkWinVertical = function (expectedValue) {
+//    var stillOk = true;
+//    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
+//      for (var j = 0; j < cellsVal.length; j++) {
+//        stillOk = true;
+//        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
+//          if (cellsVal[i + k][j] !== expectedValue) {
+//            stillOk = false;
+//          }
+//        }
+//        if (stillOk) {
+//          return true;
+//        }
+//      }
+//    }
+//    return false;
+//  };
   var isComplete = function () {
     for (var i = 0; i < cellsVal.length; i++) {
       for (var j = 0; j < cellsVal.length; j++) {
@@ -389,24 +489,37 @@ function TicTacToe() {
 
   cellsVal = [
     [
-      'o',
       undefined,
+      'o',
       'x'
     ], [
-      undefined,
+      'x',
       undefined,
       undefined
     ], [
-      'x',
+      'o',
       'o',
       undefined
     ]
   ];
   console.log('diag');
 //  console.log('o : ' + checkWinnableDiagonalTopLeft('o'));
-  console.log(checkWinnableDiagonalTopLeft('o', 3));
 //  console.log('x : ' + checkWinnableDiagonalTopLeft('x'));
-  console.log(checkWinnableDiagonalTopLeft('x'));
+//
+//  console.log(checkWinnableDiagonalTopLeft('o', 3));
+//  console.log(checkWinnableDiagonalTopLeft('x'));
+
+//  console.log(checkWinnableDiagonalTopLeftFromParameters('o'));
+//  console.log(checkWinnableDiagonalTopLeftFromParameters('x', 4));
+
+//  console.log(checkWinnableDiagonalTopRightFromParameters('o', 4));
+//  console.log(checkWinnableDiagonalTopRightFromParameters('x', 4));
+//
+//  console.log(checkWinnableVerticalFromParameters('o', 4));
+//  console.log(checkWinnableVerticalFromParameters('x', 4));
+
+  console.log(checkWinnableHorizontalFromParameters('o', 4));
+  console.log(checkWinnableHorizontalFromParameters('x', 4));
 
 
 }
