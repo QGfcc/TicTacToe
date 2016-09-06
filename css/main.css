@@ -34,6 +34,13 @@ html {
   /*font-size: 50%;*/
   /*font-size: 400%;*/
   display: table-cell;
-  background-color: green; }
+  background-color: green;
+  /*  &.won {
+      transition: color 1s;
+      color:red;
+    }*/ }
+  .cell .won {
+    transition: color 1s;
+    color: red; }
 
 /*# sourceMappingURL=main.css.map */
