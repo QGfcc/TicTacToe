@@ -371,14 +371,9 @@ function TicTacToe() {
     var diagTL = checkWinDiagonalTopLeft(expectedValue);
     var diagTR = checkWinDiagonalTopRight(expectedValue);
     var isOver = isComplete();
-    //TODO get win location
 
-//    console.log("___" + expectedValue + "___");//TODO delete
-//    console.log("hor : " + hor);
-//    console.log("vert : " + vert);
-//    console.log("diagTL : " + diagTL);
-//    console.log("diagTR : " + diagTR);
-//    console.log("isOver : " + isOver);
+
+
     console.log("___" + expectedValue + "___");//TODO delete
     console.log(hor);
     console.log(vert);
@@ -453,19 +448,19 @@ function TicTacToe() {
       }
     }
     return bestMove;
-  }
+  };
   var AIPlays = function (selfValue, enemyValue) {
 
     //TODO AI choice
 
     var bestMove = getBestMove(selfValue);
 
-    if (bestMove && bestMove.missingSlots == 1) {
+    if (bestMove && bestMove.missingSlots === 1) {
       AISelectCell(bestMove.y[0], bestMove.x[0]);
     } else {
 
       var bestEnemyMove = getBestMove(enemyValue);
-      if (bestEnemyMove && bestEnemyMove.missingSlots == 1) {
+      if (bestEnemyMove && bestEnemyMove.missingSlots === 1) {
         AISelectCell(bestEnemyMove.y[0], bestEnemyMove.x[0]);
       } else if (bestMove) {
         AISelectCell(bestMove.y[0], bestMove.x[0]);
