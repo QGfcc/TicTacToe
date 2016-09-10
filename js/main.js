@@ -109,10 +109,17 @@ function TicTacToe() {
     }
   };
 
-  var checkWinnable = function (expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection) {
+  var getWinnable = function (expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection, maxEpmtySlotsMemory) {
     var winnableCoord = undefined;
     var emptySlotsNumber;
     var lowestEmptySlotsNumber = typeof lastLowestEmptySlotsNumber !== 'undefined' ? lastLowestEmptySlotsNumber : (cellInARowToWin + 1);// to get at least 1 empty line
+    var maxEpmtySlotsMemory = typeof maxEpmtySlotsMemory !== 'undefined' ? maxEpmtySlotsMemory : -1;// if not specified, dont store and return
+    if (maxEpmtySlotsMemory > -1) { //initialize memory array
+      var winnableCoordMemory = [];
+      for (var i = 0; i < maxEpmtySlotsMemory + 1; i++) {
+        winnableCoordMemory.push([]);
+      }
+    }
     var stillOk;//TODO Init maybe
 
     for (var i = YStartingPoint; i < YEndingPoint; i++) {
@@ -122,7 +129,8 @@ function TicTacToe() {
         for (var k = 0; k < cellInARowToWin && stillOk; k++) {
           if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] === undefined) {
             emptySlotsNumber++;
-            if (emptySlotsNumber >= lowestEmptySlotsNumber) {
+            if (emptySlotsNumber >= lowestEmptySlotsNumber &&
+                emptySlotsNumber > maxEpmtySlotsMemory) {
               stillOk = false;
             }
           } else if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] !== expectedValue) {
@@ -131,40 +139,64 @@ function TicTacToe() {
         }
         if (stillOk) {
           lowestEmptySlotsNumber = emptySlotsNumber;
-          console.log(i + " " + j);//TODO delete
+//          console.log(i + " " + j);//TODO delete
           if (emptySlotsNumber === 0) {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-              y: [],
-              x: []
+//              y: [],//TODO delete
+//              x: []
+              coords: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
-              winnableCoord['y'].push(i + (YCheckDirection * k));
-              winnableCoord['x'].push(j + (XCheckDirection * k));
+//              winnableCoord['y'].push(i + (YCheckDirection * k));
+//              winnableCoord['x'].push(j + (XCheckDirection * k));
+              winnableCoord.coords.push(
+                  {
+                    y: i + (YCheckDirection * k),
+                    x: j + (XCheckDirection * k)
+                  }
+              );
             }
-            return winnableCoord;
+            if (emptySlotsNumber <= maxEpmtySlotsMemory) {
+              winnableCoordMemory[emptySlotsNumber].push(winnableCoord);
+            } else {
+              return winnableCoord;
+            }
 
           } else {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-              y: [],
-              x: []
+//              y: [],
+//              x: []
+              coords: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
               if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] === undefined) {
-                winnableCoord['y'].push(i + (YCheckDirection * k));
-                winnableCoord['x'].push(j + (XCheckDirection * k));
-//                break;//TODO delete maybe
+//                winnableCoord['y'].push(i + (YCheckDirection * k));
+//                winnableCoord['x'].push(j + (XCheckDirection * k));
+                winnableCoord.coords.push(
+                    {
+                      y: i + (YCheckDirection * k),
+                      x: j + (XCheckDirection * k)
+                    }
+                );
               }
+            }
+            if (emptySlotsNumber <= maxEpmtySlotsMemory) {
+              winnableCoordMemory[emptySlotsNumber].push(winnableCoord);
             }
           }
 
         }
       }
     }
-    return winnableCoord;
+    if (maxEpmtySlotsMemory > -1) {
+      return winnableCoordMemory;
+    } else {
+      return winnableCoord;
+    }
   };
-  var checkWinnableHorizontalFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+  var getWinnableHorizontal = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
     var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
@@ -172,10 +204,10 @@ function TicTacToe() {
     var XCheckDirection = 1;
     var YCheckDirection = 0;
 
-    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+    return getWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection, maxEpmtySlotsMemory);
 
   };
-  var checkWinnableVerticalFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+  var getWinnableVertical = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
     var XEndingPoint = cellsVal.length;
@@ -183,10 +215,10 @@ function TicTacToe() {
     var XCheckDirection = 0;
     var YCheckDirection = 1;
 
-    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+    return getWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection, maxEpmtySlotsMemory);
 
   };
-  var checkWinnableDiagonalTopLeftFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+  var getWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
     var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
@@ -194,10 +226,10 @@ function TicTacToe() {
     var XCheckDirection = 1;
     var YCheckDirection = 1;
 
-    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+    return getWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection, maxEpmtySlotsMemory);
 
   };
-  var checkWinnableDiagonalTopRightFromParameters = function (expectedValue, lastLowestEmptySlotsNumber) {
+  var getWinnableDiagonalTopRight = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory) {
     var XStartingPoint = cellInARowToWin - 1;
     var YStartingPoint = 0;
     var XEndingPoint = cellsVal.length;
@@ -205,20 +237,32 @@ function TicTacToe() {
     var XCheckDirection = -1;
     var YCheckDirection = 1;
 
-    return checkWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection);
+    return getWinnable(expectedValue, lastLowestEmptySlotsNumber, XStartingPoint, YStartingPoint, XEndingPoint, YEndingPoint, XCheckDirection, YCheckDirection, maxEpmtySlotsMemory);
 
   };
+  var checkWinnableHorizontal = function (expectedValue, lastLowestEmptySlotsNumber) {
+    return getWinnableHorizontal(expectedValue, lastLowestEmptySlotsNumber);
+  };
+  var checkWinnableVertical = function (expectedValue, lastLowestEmptySlotsNumber) {
+    return getWinnableVertical(expectedValue, lastLowestEmptySlotsNumber);
+  };
+  var checkWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber) {
+    return getWinnableDiagonalTopLeft(expectedValue, lastLowestEmptySlotsNumber);
+  };
+  var checkWinnableDiagonalTopRight = function (expectedValue, lastLowestEmptySlotsNumber) {
+    return getWinnableDiagonalTopRight(expectedValue, lastLowestEmptySlotsNumber);
+  };
   var checkWinDiagonalTopLeft = function (expectedValue) {
-    return checkWinnableDiagonalTopLeftFromParameters(expectedValue, 1);
+    return checkWinnableDiagonalTopLeft(expectedValue, 1);
   };
   var checkWinDiagonalTopRight = function (expectedValue) {
-    return checkWinnableDiagonalTopRightFromParameters(expectedValue, 1);
+    return checkWinnableDiagonalTopRight(expectedValue, 1);
   };
   var checkWinVertical = function (expectedValue) {
-    return checkWinnableVerticalFromParameters(expectedValue, 1);
+    return checkWinnableVertical(expectedValue, 1);
   };
   var checkWinHorizontal = function (expectedValue) {
-    return checkWinnableHorizontalFromParameters(expectedValue, 1);
+    return checkWinnableHorizontal(expectedValue, 1);
   };
 
   /*
@@ -373,15 +417,15 @@ function TicTacToe() {
     var isOver = isComplete();
 
 
-
-    console.log("___" + expectedValue + "___");//TODO delete
-    console.log(hor);
-    console.log(vert);
-    console.log(diagTL);
-    console.log(diagTR);
-    console.log(hor || vert || diagTL || diagTR);
-    console.log("isOver : " + isOver);
-
+    /*
+     console.log("___" + expectedValue + "___");//TODO delete
+     console.log(hor);
+     console.log(vert);
+     console.log(diagTL);
+     console.log(diagTR);
+     console.log(hor || vert || diagTL || diagTR);
+     console.log("isOver : " + isOver);
+     */
     var winLines = [];
     if (hor) {
       winLines.push(hor);
@@ -405,67 +449,72 @@ function TicTacToe() {
       return false;
     }
   };
-  var endingAnimation = function (endResults) {
-    if (endResults === true) { //endResults not an array: board complete
-
-//    } else if (){
-    } else {
-      for (var i = 0; i < endResults.length; i++) {
-        var tempObj = endResults[i];
-        var tempLength = tempObj.x.length;
-        for (var j = 0; j < tempLength; j++) {
-          cellsEl[tempObj.y[j]][tempObj.x[j]].children().addClass("won");
+  var getAllWinnable = function (expectedValue, maxEpmtySlotsMemory) {
+    maxEpmtySlotsMemory = typeof maxEpmtySlotsMemory !== 'undefined' ? maxEpmtySlotsMemory : cellInARowToWin;
+    var funArr = [
+      getWinnableHorizontal,
+      getWinnableVertical,
+      getWinnableDiagonalTopLeft,
+      getWinnableDiagonalTopRight
+    ];
+    var allWinnable = [];
+    for (var i = 0; i < maxEpmtySlotsMemory + 1; i++) {
+      allWinnable.push([]);
+    }
+    var curWinnable;
+    var curWinnableCoords;
+    for (var i = 0; i < funArr.length; i++) {
+      curWinnable = funArr[i](expectedValue, undefined, maxEpmtySlotsMemory);
+      for (var j = 0; j < curWinnable.length; j++) { //looping all arrays of array ranked by number of missing slots
+        for (var k = 0; k < curWinnable[j].length; k++) { //looping array of coord with same number of missing slots
+          curWinnableCoords = curWinnable[j][k].coords;
+          for (var l = 0; l < curWinnableCoords.length; l++)
+            allWinnable[j].push(curWinnableCoords[l]);
         }
       }
     }
+    return allWinnable;
   };
-  var swapFirstPlayer = function () {
-    isUserFirstPlayer = !isUserFirstPlayer;
+  var isForkable = function () {
+
   };
-  var swapPlayer = function () {
-    isUserPlaying = !isUserPlaying;
-  };
-  var ending = function (endResults) {
-    console.log("end");//TODO delete
-    endingAnimation(endResults);
-    window.setTimeout(restart, 2000);
-  };
-  var getBestMove = function (value) {
+  var getClosestMove = function (value) {
     var funArr = [
-      checkWinnableHorizontalFromParameters,
-      checkWinnableVerticalFromParameters,
-      checkWinnableDiagonalTopLeftFromParameters,
-      checkWinnableDiagonalTopRightFromParameters
+      checkWinnableHorizontal,
+      checkWinnableVertical,
+      checkWinnableDiagonalTopLeft,
+      checkWinnableDiagonalTopRight
     ];
     var bestMissingSlots = (cellInARowToWin + 1);// to get at least 1 empty line
-    var bestMove;
+    var closestMove;
     var tempMove;
     for (var i = 0; i < funArr.length && bestMissingSlots > 1; i++) {
       tempMove = funArr[i](value, bestMissingSlots);
       if (tempMove !== undefined) {
         bestMissingSlots = tempMove.missingSlots;
-        bestMove = tempMove;
+        closestMove = tempMove;
       }
     }
-    return bestMove;
+    return closestMove;
   };
   var AIPlays = function (selfValue, enemyValue) {
 
     //TODO AI choice
 
-    var bestMove = getBestMove(selfValue);
+    var closestMove = getClosestMove(selfValue);
 
-    if (bestMove && bestMove.missingSlots === 1) {
-      AISelectCell(bestMove.y[0], bestMove.x[0]);
+    if (closestMove && closestMove.missingSlots === 1) {
+//      AISelectCell(closestMove.y[0], closestMove.x[0]);
+      AISelectCell(closestMove.coords[0].y, closestMove[0].x);
     } else {
 
-      var bestEnemyMove = getBestMove(enemyValue);
-      if (bestEnemyMove && bestEnemyMove.missingSlots === 1) {
-        AISelectCell(bestEnemyMove.y[0], bestEnemyMove.x[0]);
-      } else if (bestMove) {
-        AISelectCell(bestMove.y[0], bestMove.x[0]);
-      } else if (bestEnemyMove) {
-        AISelectCell(bestEnemyMove.y[0], bestEnemyMove.x[0]);
+      var closestEnemyMove = getClosestMove(enemyValue);
+      if (closestEnemyMove && closestEnemyMove.missingSlots === 1) {
+        AISelectCell(closestEnemyMove.coords[0].y, closestEnemyMove.coords[0].x);
+      } else if (closestMove) {
+        AISelectCell(closestMove.coords[0].y, closestMove.coords[0].x);
+      } else if (closestEnemyMove) {
+        AISelectCell(closestEnemyMove.coords[0].y, closestEnemyMove.coords[0].x);
       } else {
 
         //TODO delete
@@ -482,6 +531,31 @@ function TicTacToe() {
     }
 
     routine();
+  };
+  var endingAnimation = function (endResults) {
+    if (endResults === true) { //endResults not an array: board complete
+
+//    } else if (){
+    } else {
+      for (var i = 0; i < endResults.length; i++) {
+        var tempObj = endResults[i];
+        var tempLength = tempObj.coords.length;
+        for (var j = 0; j < tempLength; j++) {
+          cellsEl[tempObj.coords[j].y][tempObj.coords[j].x].children().addClass("won");
+        }
+      }
+    }
+  };
+  var swapFirstPlayer = function () {
+    isUserFirstPlayer = !isUserFirstPlayer;
+  };
+  var swapPlayer = function () {
+    isUserPlaying = !isUserPlaying;
+  };
+  var ending = function (endResults) {
+    console.log("end");//TODO delete
+    endingAnimation(endResults);
+    window.setTimeout(restart, 2000);
   };
   var getCurValue = function () {
     if ((isUserPlaying && isUserX) || ((!isUserPlaying) && (!isUserX))) {
@@ -512,6 +586,14 @@ function TicTacToe() {
     start();
   };
   $('#restartBtn').click(restart.bind(this));//TODO delete
+//  $('#winnableXBtn').click(getAllWinnable.bind(this, "x", undefined));//TODO delete
+//  $('#winnableOBtn').click(getAllWinnable.bind(this, "o", undefined));//TODO delete
+  $('#winnableXBtn').click(function () {
+    console.log(getAllWinnable("x", undefined));//TODO delete
+  });
+  $('#winnableOBtn').click(function () {
+    console.log(getAllWinnable("o", undefined));//TODO delete
+  });
   setCellListener();
   start();
 
@@ -605,6 +687,12 @@ function TicTacToe() {
 
 //  console.log(checkWinnableHorizontalFromParameters('o', 4));
 //  console.log(checkWinnableHorizontalFromParameters('x', 4));
+//
+//  console.log("dqsf");
+//  console.log(getWinnableHorizontal('o', 4, 6));
+
+  console.log(getAllWinnable('o', 6));
+  console.log(getAllWinnable('x', 6));
 
 
 }
