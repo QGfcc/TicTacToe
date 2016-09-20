@@ -42,5 +42,9 @@ html {
   .cell .won {
     transition: color 1s;
     color: red; }
+  .cell .hint {
+    transition: color 1s;
+    /*color:blue;*/
+    color: rgba(0, 0, 0, 0.2); }
 
 /*# sourceMappingURL=main.css.map */

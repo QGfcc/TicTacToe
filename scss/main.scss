@@ -46,4 +46,9 @@ html {
     transition: color 1s;
     color:red;
   }
+  .hint {
+    transition: color 1s;
+    /*color:blue;*/
+    color: rgba(0,0,0,0.2);
+  }
 }
