@@ -84,28 +84,15 @@ function TicTacToe() {
     }
   };
   var userSelectCell = function (cellX, cellY) {
-//    isUserPlaying = !isUserPlaying;
-//    if (isUserPlaying && cellsVal[cellX][cellY] === undefined) {
-//      isUserX = !isUserX;//TODO delete
     if (isUserX) {
       cellsVal[cellX][cellY] = "x";
     } else {
       cellsVal[cellX][cellY] = "o";
     }
     displaySelection(cellX, cellY);
-//      routine();
-//    }
   };
   var userClickCell = function (cellX, cellY) {
-//    isUserPlaying = !isUserPlaying;
     if (isUserPlaying && cellsVal[cellX][cellY] === undefined) {
-//      isUserX = !isUserX;//TODO delete
-//      if (isUserX) {
-//        cellsVal[cellX][cellY] = "x";
-//      } else {
-//        cellsVal[cellX][cellY] = "o";
-//      }
-//      displaySelection(cellX, cellY);
       userSelectCell(cellX, cellY);
       routine();
     }
@@ -128,7 +115,7 @@ function TicTacToe() {
   var cleanCells = function () {
     for (var i = 0; i < cellsEl.length; i++) {
       for (var j = 0; j < cellsEl[i].length; j++) {
-        cellsEl[i][j].text(""); //TODO to check
+        cellsEl[i][j].text("");
         cellsVal[i][j] = undefined;
       }
     }
@@ -145,7 +132,7 @@ function TicTacToe() {
         winnableCoordMemory.push([]);
       }
     }
-    var stillOk; //TODO Init maybe
+    var stillOk;
 
     for (var i = YStartingPoint; i < YEndingPoint; i++) {
       for (var j = XStartingPoint; j < XEndingPoint; j++) {
@@ -169,17 +156,12 @@ function TicTacToe() {
         }
         if (stillOk) {
           lowestEmptySlotsNumber = emptySlotsNumber;
-//          console.log(i + " " + j);//TODO delete
           if (emptySlotsNumber === 0) {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-//              y: [],//TODO delete
-//              x: []
               coords: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
-//              winnableCoord['y'].push(i + (YCheckDirection * k));
-//              winnableCoord['x'].push(j + (XCheckDirection * k));
               winnableCoord.coords.push(
                   {
                     y: i + (YCheckDirection * k),
@@ -196,14 +178,10 @@ function TicTacToe() {
           } else {
             winnableCoord = {
               missingSlots: emptySlotsNumber,
-//              y: [],
-//              x: []
               coords: []
             };
             for (var k = 0; k < cellInARowToWin; k++) {
               if (cellsVal[i + (YCheckDirection * k)][j + (XCheckDirection * k)] === undefined) {
-//                winnableCoord['y'].push(i + (YCheckDirection * k));
-//                winnableCoord['x'].push(j + (XCheckDirection * k));
                 winnableCoord.coords.push(
                     {
                       y: i + (YCheckDirection * k),
@@ -286,140 +264,6 @@ function TicTacToe() {
   var checkWinHorizontal = function (expectedValue) {
     return checkWinnableHorizontal(expectedValue, 1);
   };
-  /*
-   //  var checkWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber) {
-   ////    var counter = 0;
-   ////    var winnableCoord = [];
-   //    var winnableCoord = undefined;
-   //    var emptySlotsNumber;
-   ////    var lowestEmptySlotsNumber = lastLowestEmptySlotsNumber | (cellInARowToWin + 1);// to get at least 1 empty line
-   //    var lowestEmptySlotsNumber = typeof lastLowestEmptySlotsNumber !== 'undefined' ? lastLowestEmptySlotsNumber : (cellInARowToWin + 1);// to get at least 1 empty line
-   //
-   //    var stillOk = true;//TODO unInit
-   //    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-   //      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
-   //        emptySlotsNumber = 0;
-   //        stillOk = true;
-   //        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-   //          if (cellsVal[i + k][j + k] === undefined) {
-   //            emptySlotsNumber++;
-   //            if (emptySlotsNumber >= lowestEmptySlotsNumber) {
-   //              stillOk = false;
-   //            }
-   //          } else if (cellsVal[i + k][j + k] !== expectedValue) {
-   //            stillOk = false;
-   //          }
-   //        }
-   //        if (stillOk) {
-   //          lowestEmptySlotsNumber = emptySlotsNumber;
-   //          console.log(i + " " + j);//TODO delete
-   //          if (emptySlotsNumber === 0) {
-   //            winnableCoord = {
-   //              missingSlots: emptySlotsNumber,
-   //              x: [],
-   //              y: []
-   //            };
-   //            for (var k = 0; k < cellInARowToWin; k++) {
-   //              winnableCoord['y'].push(i + k);
-   //              winnableCoord['x'].push(j + k);
-   //            }
-   //            return winnableCoord;
-   //
-   //          } else {
-   //            winnableCoord = {
-   //              missingSlots: emptySlotsNumber,
-   //              x: [],
-   //              y: []
-   //            };
-   //            for (var k = 0; k < cellInARowToWin; k++) {
-   //              if (cellsVal[i + k][j + k] === undefined) {
-   //                winnableCoord['y'].push(i + k);
-   //                winnableCoord['x'].push(j + k);
-   ////                break;//TODO delete maybe
-   //              }
-   //            }
-   //          }
-   //
-   //        }
-   //      }
-   //    }
-   //    return winnableCoord;
-   //  };
-   //  var checkWinDiagonalTopLeft = function (expectedValue) {
-   ////    var counter = 0;
-   //    var stillOk = true;
-   //    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-   //      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
-   //        stillOk = true;
-   //        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-   //          if (cellsVal[i + k][j + k] !== expectedValue) {
-   //            stillOk = false;
-   //          }
-   //        }
-   //        if (stillOk) {
-   //          return true;
-   //        }
-   //      }
-   //    }
-   //    return false;
-   //  };
-   //  var checkWinDiagonalTopRight = function (expectedValue) {
-   //    var stillOk = true;
-   //    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-   //      for (var j = cellInARowToWin - 1; j < cellsVal.length; j++) {
-   //        stillOk = true;
-   //        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-   //          if (cellsVal[i + k][j - k] !== expectedValue) {
-   //            stillOk = false;
-   //          }
-   //        }
-   //        if (stillOk) {
-   //          return true;
-   //        }
-   //      }
-   //    }
-   //    return false;
-   //  };
-   //  var checkWinDiagonal = function (expectedValue) {
-   //    return    checkWinDiagonalTopLeft(expectedValue) ||
-   ////    return    !!checkWinnableDiagonalTopLeft(expectedValue, 0) || //TODO change
-   //        checkWinDiagonalTopRight(expectedValue);
-   //  };
-   //  var checkWinHorizontal = function (expectedValue) {
-   //    var stillOk = true;
-   //    for (var i = 0; i < cellsVal.length; i++) {
-   //      for (var j = 0; j < cellsVal.length - cellInARowToWin + 1; j++) {
-   //        stillOk = true;
-   //        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-   //          if (cellsVal[i][j + k] !== expectedValue) {
-   //            stillOk = false;
-   //          }
-   //        }
-   //        if (stillOk) {
-   //          return true;
-   //        }
-   //      }
-   //    }
-   //    return false;
-   //  };
-   //  var checkWinVertical = function (expectedValue) {
-   //    var stillOk = true;
-   //    for (var i = 0; i < cellsVal.length - cellInARowToWin + 1; i++) {
-   //      for (var j = 0; j < cellsVal.length; j++) {
-   //        stillOk = true;
-   //        for (var k = 0; k < cellInARowToWin && stillOk; k++) {
-   //          if (cellsVal[i + k][j] !== expectedValue) {
-   //            stillOk = false;
-   //          }
-   //        }
-   //        if (stillOk) {
-   //          return true;
-   //        }
-   //      }
-   //    }
-   //    return false;
-   //  };*/ //TODO delete
-
   var isComplete = function () {
     for (var i = 0; i < cellsVal.length; i++) {
       for (var j = 0; j < cellsVal.length; j++) {
@@ -436,15 +280,6 @@ function TicTacToe() {
     var diagTL = checkWinDiagonalTopLeft(expectedValue);
     var diagTR = checkWinDiagonalTopRight(expectedValue);
     var isOver = isComplete();
-    /*
-     console.log("___" + expectedValue + "___");//TODO delete
-     console.log(hor);
-     console.log(vert);
-     console.log(diagTL);
-     console.log(diagTR);
-     console.log(hor || vert || diagTL || diagTR);
-     console.log("isOver : " + isOver);
-     */
     var winLines = [];
     if (hor) {
       winLines.push(hor);
@@ -458,7 +293,6 @@ function TicTacToe() {
     if (diagTR) {
       winLines.push(diagTR);
     }
-
     if (winLines.length !== 0) {
       return winLines;
     }
@@ -538,26 +372,6 @@ function TicTacToe() {
     }
     return true;
   };
-//  var sortCoords = function (coordsArr) {
-//    coordsArr.sort(coordsComparator);
-//  };
-  /*
-   var getForkMove = function (expectedValue) {
-
-   //    var allWinnable = getAllWinnable(expectedValue, 2, 2);//TODO unComment
-   var allWinnable = getAllWinnable(expectedValue, 3, 0);
-   var allWinnableByCell = allWinnable.byCell;
-   var allForkable = [];
-   if (allWinnableByCell.length >= 3) {
-   allWinnableByCell[2].sort(coordsComparator);
-   //      for (var i = 0; i < allWinnable[2].length; i++) {
-   //        if (allWinnable[2][i] == )
-   //      }
-   allForkable = allWinnableByCell[2].filter(filterUniqueCoords);
-   //      return {allForkable: allForkable, allWinnableByLine: allWinnable.byLine};
-   return {allForkable: allForkable, allWinnable: allWinnable};
-   }
-   };*/
   var getForkMove = function (allWinnableByCell) {
 
 //    if (allWinnableByCell === undefined) {
@@ -568,58 +382,11 @@ function TicTacToe() {
     var allForkable = [];
     if (allWinnableByCell.length >= 3) {
       allWinnableByCell[2].sort(coordsComparator);
-//      for (var i = 0; i < allWinnable[2].length; i++) {
-//        if (allWinnable[2][i] == )
-//      }
       allForkable = allWinnableByCell[2].filter(filterUniqueCoords);
       return allForkable;
     }
   };
-  /*  var getNextTurnForkMove = function (expectedValue) {
-
-   //    var allWinnable = getAllWinnable(expectedValue, 2, 2);//TODO unComment
-   var allWinnable = getAllWinnable(expectedValue, 3, 0);
-   var allWinnableByCell = allWinnable.byCell;
-   var allWinnableByLine = allWinnable.byLine;
-   var allNextTurnForkable = [];
-   if (allWinnableByCell.length >= 3 &&
-   allWinnableByCell[2].length >= 2 &&
-   allWinnableByCell[3].length >= 1) {
-   for (var i = 0; i < allWinnableByCell[2].length; i++) {
-   if (allWinnableByCell[2][i]) {
-   var firstCell = allWinnableByCell[2][i];
-   for (var j = 0; j < allWinnableByCell[3].length; j++) {
-   if (allWinnableByCell[3][j] && isCoordsEqual(allWinnableByCell[3][j], firstCell)) {
-   var ID = allWinnableByCell[3][j].ID;
-   var curLine = allWinnableByLine[ID]
-   for (var k = 0; curLine && k < curLine.length; k++) {
-   if (!isCoordsEqual(curLine[k], firstCell)) {
-   var secondCell = curLine[k];
-   for (var l = i; l < allWinnableByCell[2].length; l++) {
-   if (allWinnableByCell[2][l] && isCoordsEqual(allWinnableByCell[2][l], secondCell)) {
-   allNextTurnForkable.push({first: firstCell, second: secondCell});
-   }
-   }
-   }
-   }
-   }
-   }
-   }
-   }
-
-   //      allWinnableByCell[2].sort(coordsComparator);
-   //      for (var i = 0; i < allWinnable[2].length; i++) {
-   //        if (allWinnable[2][i] == )
-   //      }
-   //      allNextTurnForkable = allWinnableByCell[2].filter(filterUniqueCoords);
-   //      return {allForkable: allForkable, allWinnableByLine: allWinnable.byLine};
-   return {allNextTurnForkable: allNextTurnForkable, allWinnable: allWinnable};
-   }
-   };*/
   var getNextTurnForkMove = function (allWinnable) {
-
-//    var allWinnable = getAllWinnable(expectedValue, 2, 2);//TODO unComment
-//    var allWinnable = getAllWinnable(expectedValue, 3, 0);
     var allWinnableByCell = allWinnable.byCell;
     var allWinnableByLine = allWinnable.byLine;
     var allNextTurnForkable = [];
@@ -654,13 +421,6 @@ function TicTacToe() {
           }
         }
       }
-
-//      allWinnableByCell[2].sort(coordsComparator);
-//      for (var i = 0; i < allWinnable[2].length; i++) {
-//        if (allWinnable[2][i] == )
-//      }
-//      allNextTurnForkable = allWinnableByCell[2].filter(filterUniqueCoords);
-//      return {allForkable: allForkable, allWinnableByLine: allWinnable.byLine};
       return allNextTurnForkable;
     }
   };
@@ -688,7 +448,7 @@ function TicTacToe() {
         for (var j = 0; j < NTForkableCheckMoves.length && !isCurNTFMoveChecked; j++) {
           var NTForkableCell = NTForkableCheckMoves[j];
           var lineID = NTForkableCell.ID;
-          var line = allWinnable.byLine[lineID]; //TODO not the common one
+          var line = allWinnable.byLine[lineID];
           for (var l = 0; l < line.length && !isCurNTFMoveChecked; l++) {
             if (!isCoordsEqual(NTForkableCell, line[l])) {
               isOk = true;
@@ -747,7 +507,7 @@ function TicTacToe() {
     var line;
     var ENTForkableMoves;
     if (enemyAllNextTurnForkable &&
-        enemyAllNextTurnForkable.length > 0 && //TODO check
+        enemyAllNextTurnForkable.length > 0 &&
         enemyAllWinnable &&
         enemyAllWinnable.byLine) {//TODO check
       for (var i = 0; i < enemyAllNextTurnForkable.length; i++) {
@@ -757,20 +517,15 @@ function TicTacToe() {
         }
         ENTForkableMoves.push(enemyAllNextTurnForkable[i].lastMove);
         movesLinesCoords = [];
-//        if (ENTForkableMoves.length > 0) {
-//          NTForkableCell = ENTForkableMoves[0];
-//          lineID = NTForkableCell.ID;
-//          line = enemyAllWinnable.byLine[lineID]; //TODO not the common one}
         for (var j = 0; j < ENTForkableMoves.length; j++) {
           NTForkableCell = ENTForkableMoves[j];
           lineID = NTForkableCell.ID;
-          line = enemyAllWinnable.byLine[lineID]; //TODO not the common one}
+          line = enemyAllWinnable.byLine[lineID];
           for (var k = 0; k < line.length; k++) {
             movesLinesCoords.push(line[k]);
           }
         }
         movesLinesCoordsList.push(movesLinesCoords);
-//      }
       }
       var commonCoords = getCommonCoords(movesLinesCoordsList);
       return commonCoords;
@@ -799,20 +554,16 @@ function TicTacToe() {
   var AIBestMove = function (selfValue, enemyValue) {
     var closestMove = getClosestMove(selfValue);
     if (closestMove && closestMove.missingSlots === 1) {
-      //      AISelectCell(closestMove.coords[0].y, closestMove.coords[0].x);
       return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
     }
     var closestEnemyMove = getClosestMove(enemyValue);
     if (closestEnemyMove && closestEnemyMove.missingSlots === 1) {
-      //        AISelectCell(closestEnemyMove.coords[0].y, closestEnemyMove.coords[0].x);
       return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
     }
-    //    var allWinnable = getAllWinnable(expectedValue, 2, 2);//TODO unComment
+    //    var allWinnable = getAllWinnable(expectedValue, 3, 2);//TODO unComment
     var allWinnable = getAllWinnable(selfValue, 3, 0);
     var allForkable = getForkMove(allWinnable.byCell);
-    //    if (forkResults.allForkable.length > 0) {
     if (allForkable.length > 0) {
-      //          AISelectCell(forkResults.allForkable[0].y, forkResults.allForkable[0].x)
       return {y: allForkable[0].y, x: allForkable[0].x};
     }
     var enemyAllWinnable = getAllWinnable(enemyValue, 3, 0);
@@ -825,7 +576,6 @@ function TicTacToe() {
     }
     var enemyAllForkable = getForkMove(enemyAllWinnable.byCell);
     if (enemyAllForkable.length > 0) {//TODO watch for multiple fork
-      //            AISelectCell(enemyforkResults.allForkable[0].y, enemyforkResults.allForkable[0].x)
       return {y: enemyAllForkable[0].y, x: enemyAllForkable[0].x};
     }
     var enemyAllNextTurnForkable = getNextTurnForkMove(enemyAllWinnable);
@@ -844,21 +594,16 @@ function TicTacToe() {
       }
     }
     if (closestMove) {
-      //              AISelectCell(closestMove.coords[0].y, closestMove.coords[0].x);
       return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
     } else if (closestEnemyMove) {
-      //              AISelectCell(closestEnemyMove.coords[0].y, closestEnemyMove.coords[0].x);
       return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
     } else {
-
       //TODO delete
       var isChosen = false;
       for (var i = 0; i < cellsVal.length && !isChosen; i++) {
         for (var j = 0; j < cellsVal.length && !isChosen; j++) {
           if (cellsVal[j][i] === undefined) {
-            //                    AISelectCell(i, j);
             return {y: j, x: i};
-            //                    isChosen = true;
           }
         }
       } //TODO delete
@@ -875,7 +620,6 @@ function TicTacToe() {
   };
   var endingAnimation = function (endResults) {
     if (endResults === true) { //endResults not an array: board complete
-      //    if (typeof endResults !== 'boolean') { //endResults not an array: board complete
     } else {
       for (var i = 0; i < endResults.length; i++) {
         var tempObj = endResults[i];
@@ -893,21 +637,18 @@ function TicTacToe() {
     isUserPlaying = !isUserPlaying;
   };
   var ending = function (endResults) {
-    console.log("end"); //TODO delete
     endingAnimation(endResults);
     window.setTimeout(restart, 2000);
   };
   var getValues = function () {
     if ((isUserPlaying && isUserX) || ((!isUserPlaying) && (!isUserX))) {
-      //      return 'x';
       return {cur: 'x', next: 'o'};
     } else {
-      //      return 'o';
       return {cur: 'o', next: 'x'};
     }
   };
   var routine = function () {
-    var values = getValues();
+    var values = getValues();//TODO make two player possible
     var endResults = isGameOver(values.cur);
     if (isHinting) {
       removeHint();
@@ -934,15 +675,11 @@ function TicTacToe() {
     start();
   };
   $('#restartBtn').click(restart.bind(this)); //TODO delete
-//  $('#winnableXBtn').click(getAllWinnable.bind(this, "x", undefined));//TODO delete
-//  $('#winnableOBtn').click(getAllWinnable.bind(this, "o", undefined));//TODO delete
   $('#hintBtn').click(toggleHint.bind(this)); //TODO delete
-  $('#winnableXBtn').click(function () {
-    console.log(getAllWinnable("x", undefined)); //TODO delete
-  });
-  $('#winnableOBtn').click(function () {
-    console.log(getAllWinnable("o", undefined)); //TODO delete
-  });
+//  $('#winnableXBtn').click(function () {
+//  });
+//  $('#winnableOBtn').click(function () {
+//  });
 //  $('#forkOBtn').click(function () {
 //    console.log(getForkMove("o")); //TODO delete
 //  });
@@ -957,105 +694,7 @@ function TicTacToe() {
 //  });
   setCellListener();
   start();
-/////////TODO delete tests
-  /*
-   //  cellsVal = [
-   //    [
-   //      'x',
-   //      'x',
-   //      undefined
-   //    ], [
-   //      'undefined',
-   //      undefined,
-   //      undefined
-   //    ], [
-   //      'x',
-   //      'x',
-   //      undefined
-   //    ]
-   //  ];
-   //  console.log('hor');
-   //  console.log('o : ' + checkWinHorizontal('o'));
-   //  console.log('x : ' + checkWinHorizontal('x'));
-   //  cellsVal = [
-   //    [
-   //      'x',
-   //      undefined,
-   //      undefined
-   //    ], [
-   //      'x',
-   //      undefined,
-   //      undefined
-   //    ], [
-   //      'x',
-   //      'x',
-   //      'o'
-   //    ]
-   //  ];
-   //  console.log('vert');
-   //  console.log('o : ' + checkWinVertical('o'));
-   //  console.log('x : ' + checkWinVertical('x'));
-   //  cellsVal = [
-   //    [
-   //      'o',
-   //      undefined,
-   //      'x'
-   //    ], [
-   //      undefined,
-   //      'x',
-   //      undefined
-   //    ], [
-   //      'x',
-   //      'o',
-   //      'o'
-   //    ]
-   //  ];
-   //  console.log('diag');
-   //  console.log('o : ' + checkWinDiagonal('o'));
-   //  console.log('x : ' + checkWinDiagonal('x'));
-   */
-  /*
-   //  cellsVal = [
-   //    [
-   //      undefined,
-   //      'o',
-   //      'x'
-   //    ], [
-   //      'x',
-   //      undefined,
-   //      undefined
-   //    ], [
-   //      'o',
-   //      'o',
-   //      undefined
-   //    ]
-   //  ];
-   //  console.log('diag');
-   //  console.log('o : ' + checkWinnableDiagonalTopLeft('o'));
-   //  console.log('x : ' + checkWinnableDiagonalTopLeft('x'));
-   //
-   //  console.log(checkWinnableDiagonalTopLeft('o', 3));
-   //  console.log(checkWinnableDiagonalTopLeft('x'));
-
-   //  console.log(checkWinnableDiagonalTopLeftFromParameters('o'));
-   //  console.log(checkWinnableDiagonalTopLeftFromParameters('x', 4));
-
-   //  console.log(checkWinnableDiagonalTopRightFromParameters('o', 4));
-   //  console.log(checkWinnableDiagonalTopRightFromParameters('x', 4));
-   //
-   //  console.log(checkWinnableVerticalFromParameters('o', 4));
-   //  console.log(checkWinnableVerticalFromParameters('x', 4));
-
-   //  console.log(checkWinnableHorizontalFromParameters('o', 4));
-   //  console.log(checkWinnableHorizontalFromParameters('x', 4));
-
-   //  console.log("dqsf");
-   //  console.log(getWinnableHorizontal('o', 4, 6));
-   //*/
-  console.log(getAllWinnable('o', 6));
-  console.log(getAllWinnable('x', 6));
 }
 $(document).ready(function () {
   var game = new TicTacToe();
-}
-);
+});
