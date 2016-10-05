@@ -45,10 +45,13 @@ function TicTacToe() {
 //  var glyphiconO = "fa fa-circle-o";
 //  var iconO = '<i class="fa fa-circle-o"></i>';
   var iconO = $('<i class="fa fa-circle-o"></i>');
-  var isTwoPlayerGame = false;
-  var isUserFirstPlayer = true;
-  var isUserPlaying = true;
-  var isUserX = false;
+  var isPlayer1FirstPlayer = true;
+  var isPlayer1Playing = true;
+  var isPlayer1X = false; //TODO get in GUI
+  var isPlayer1AI = false; //TODO get in GUI
+//  var isPlayer1AI = true;
+  var isPlayer2AI = false;//TODO get in GUI
+//  var isPlayer2AI = true;
   var isHinting = true; //TODO get in GUI //TODO set to false
   var lastHint = undefined;
   var displaySelection = function (cellX, cellY) {
@@ -84,27 +87,36 @@ function TicTacToe() {
       removeHint();
     }
   };
-  var userSelectCell = function (cellX, cellY) {
-    if (isUserX) {
-      cellsVal[cellX][cellY] = "x";
-    } else {
-      cellsVal[cellX][cellY] = "o";
-    }
+//  var userSelectCell = function (cellX, cellY) {
+//    if (isPlayer1X) {
+//      cellsVal[cellX][cellY] = "x";
+//    } else {
+//      cellsVal[cellX][cellY] = "o";
+//    }
+//    displaySelection(cellX, cellY);
+//  };
+//  var AISelectCell = function (cellX, cellY) {
+//    if (isPlayer1X) {
+//      cellsVal[cellX][cellY] = "o";
+//    } else {
+//      cellsVal[cellX][cellY] = "x";
+//    }
+//    displaySelection(cellX, cellY);
+//  };
+  var selectCell = function (cellX, cellY) {
+    var curVal = getValues().cur;
+    cellsVal[cellX][cellY] = curVal;
     displaySelection(cellX, cellY);
+  };
+  var isAUserPlaying = function () {
+    return (isPlayer1Playing && !isPlayer1AI) || (!isPlayer1Playing && !isPlayer2AI);
   };
   var userClickCell = function (cellX, cellY) {
-    if (isUserPlaying && cellsVal[cellX][cellY] === undefined) {
-      userSelectCell(cellX, cellY);
+    if (isAUserPlaying() && cellsVal[cellX][cellY] === undefined) {
+//      userSelectCell(cellX, cellY);
+      selectCell(cellX, cellY);
       routine();
     }
-  };
-  var AISelectCell = function (cellX, cellY) {
-    if (isUserX) {
-      cellsVal[cellX][cellY] = "o";
-    } else {
-      cellsVal[cellX][cellY] = "x";
-    }
-    displaySelection(cellX, cellY);
   };
   var setCellListener = function () {
     for (var i = 0; i < cellsEl.length; i++) {
@@ -647,7 +659,7 @@ function TicTacToe() {
   };
   var AIPlays = function (selfValue, enemyValue) {
     var bestMove = AIBestMove(selfValue, enemyValue);
-    AISelectCell(bestMove.y, bestMove.x);
+    selectCell(bestMove.y, bestMove.x);
     routine();
   };
   var AIHints = function (selfValue, enemyValue) {
@@ -667,17 +679,17 @@ function TicTacToe() {
     }
   };
   var swapFirstPlayer = function () {
-    isUserFirstPlayer = !isUserFirstPlayer;
+    isPlayer1FirstPlayer = !isPlayer1FirstPlayer;
   };
   var swapPlayer = function () {
-    isUserPlaying = !isUserPlaying;
+    isPlayer1Playing = !isPlayer1Playing;
   };
   var ending = function (endResults) {
     endingAnimation(endResults);
     window.setTimeout(restart, 2000);
   };
   var getValues = function () {
-    if ((isUserPlaying && isUserX) || ((!isUserPlaying) && (!isUserX))) {
+    if ((isPlayer1Playing && isPlayer1X) || ((!isPlayer1Playing) && (!isPlayer1X))) {
       return {cur: 'x', next: 'o'};
     } else {
       return {cur: 'o', next: 'x'};
@@ -694,7 +706,8 @@ function TicTacToe() {
     } else {
       swapPlayer();
       values = getValues();
-      if (!isUserPlaying) { // if player's turn, stop and wait
+//      if (!isPlayer1Playing) { // if player's turn, stop and wait
+      if (!isAUserPlaying()) { // if player's turn, stop and wait
         AIPlays(values.cur, values.next);
       } else if (isHinting) {
         AIHints(values.cur, values.next);
@@ -702,7 +715,7 @@ function TicTacToe() {
     }
   };
   var start = function () {
-    isUserPlaying = isUserFirstPlayer;
+    isPlayer1Playing = isPlayer1FirstPlayer;
     routine();
   };
   var restart = function () {
@@ -729,6 +742,7 @@ function TicTacToe() {
 //    console.log(getNextTurnForkMove("x")); //TODO delete
 //  });
   setCellListener();
+  swapFirstPlayer();//routine will swap it again => get the right first player
   start();
 }
 $(document).ready(function () {
