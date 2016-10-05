@@ -6,39 +6,43 @@
 
 
 function TicTacToe() {
-  var horizontalCellNumber = 3;
-  var verticalCellNumber = 3;
-  var cellInARowToWin = 3;
-  var cellsEl = [//TODO gen from rows number
-    [
-      $("#cell1"),
-      $("#cell2"),
-      $("#cell3")
-    ], [
-      $("#cell4"),
-      $("#cell5"),
-      $("#cell6")
-    ], [
-      $("#cell7"),
-      $("#cell8"),
-      $("#cell9")
-    ]
-  ];
-  var cellsVal = [//TODO gen from rows number
-    [
-      undefined,
-      undefined,
-      undefined
-    ], [
-      undefined,
-      undefined,
-      undefined
-    ], [
-      undefined,
-      undefined,
-      undefined
-    ]
-  ];
+  var horizontalCellNumber = 6;
+//  var verticalCellNumber = 6;
+  var verticalCellNumber = horizontalCellNumber;
+  var cellInARowToWin = 4;
+//  var cellsEl = [//TODO gen from rows number
+//    [
+//      $("#cell1"),
+//      $("#cell2"),
+//      $("#cell3")
+//    ], [
+//      $("#cell4"),
+//      $("#cell5"),
+//      $("#cell6")
+//    ], [
+//      $("#cell7"),
+//      $("#cell8"),
+//      $("#cell9")
+//    ]
+//  ];
+//  var cellsVal = [//TODO gen from rows number
+//    [
+//      undefined,
+//      undefined,
+//      undefined
+//    ], [
+//      undefined,
+//      undefined,
+//      undefined
+//    ], [
+//      undefined,
+//      undefined,
+//      undefined
+//    ]
+//  ];
+  var cellsEl;
+  var cellsVal;
+
 //  var glyphiconX = "glyphicon glyphicon-remove";
 //  var iconX = '<span class="glyphicon glyphicon-remove"></span>';
   var iconX = $('<span class="glyphicon glyphicon-remove"></span>');
@@ -50,10 +54,33 @@ function TicTacToe() {
   var isPlayer1X = false; //TODO get in GUI
   var isPlayer1AI = false; //TODO get in GUI
 //  var isPlayer1AI = true;
-  var isPlayer2AI = false;//TODO get in GUI
-//  var isPlayer2AI = true;
+//  var isPlayer2AI = false;//TODO get in GUI
+  var isPlayer2AI = true;
   var isHinting = true; //TODO get in GUI //TODO set to false
   var lastHint = undefined;
+
+  var buildGrid = function () { //TODO get in GUI
+//    var grid = $('<div class="grid"></div>');
+    var grid = $('#grid');
+    var row = $('<div class="row"></div>');
+    var cell = $('<div class="cell"></div>');
+    cellsEl = [];
+    cellsVal = [];
+    for (var i = 0; i < verticalCellNumber; i++) {
+      var curRow = row.clone();
+      var curElLine = [];
+      var curValLine = [];
+      for (var j = 0; j < horizontalCellNumber; j++) {
+        curCell = cell.clone();
+        curElLine.push(curCell);
+        curRow.append(curCell);
+        curValLine.push(undefined);
+      }
+      cellsEl.push(curElLine);
+      cellsVal.push(curValLine);
+      grid.append(curRow);
+    }
+  };
   var displaySelection = function (cellX, cellY) {
     cellsEl[cellX][cellY].text(""); // to clean potential hint
     if (cellsVal[cellX][cellY] === "x") {
@@ -87,22 +114,6 @@ function TicTacToe() {
       removeHint();
     }
   };
-//  var userSelectCell = function (cellX, cellY) {
-//    if (isPlayer1X) {
-//      cellsVal[cellX][cellY] = "x";
-//    } else {
-//      cellsVal[cellX][cellY] = "o";
-//    }
-//    displaySelection(cellX, cellY);
-//  };
-//  var AISelectCell = function (cellX, cellY) {
-//    if (isPlayer1X) {
-//      cellsVal[cellX][cellY] = "o";
-//    } else {
-//      cellsVal[cellX][cellY] = "x";
-//    }
-//    displaySelection(cellX, cellY);
-//  };
   var selectCell = function (cellX, cellY) {
     var curVal = getValues().cur;
     cellsVal[cellX][cellY] = curVal;
@@ -741,6 +752,7 @@ function TicTacToe() {
 //  $('#forkNTXBtn').click(function () {
 //    console.log(getNextTurnForkMove("x")); //TODO delete
 //  });
+  buildGrid();
   setCellListener();
   swapFirstPlayer();//routine will swap it again => get the right first player
   start();
