@@ -45,6 +45,7 @@ function TicTacToe() {
 //  var glyphiconO = "fa fa-circle-o";
 //  var iconO = '<i class="fa fa-circle-o"></i>';
   var iconO = $('<i class="fa fa-circle-o"></i>');
+  var isTwoPlayerGame = false;
   var isUserFirstPlayer = true;
   var isUserPlaying = true;
   var isUserX = false;
@@ -373,14 +374,9 @@ function TicTacToe() {
     return true;
   };
   var getForkMove = function (allWinnableByCell) {
-
-//    if (allWinnableByCell === undefined) {
-//    var allWinnable = getAllWinnable(expectedValue, 2, 2);//TODO unComment
-////      var allWinnableByCell = getAllWinnable(expectedValue, 3, 0).byCell;
-//    }
-
     var allForkable = [];
-    if (allWinnableByCell.length >= 3) {
+//    if (allWinnableByCell.length >= 3) {
+    if (allWinnableByCell.length >= 2) { //TODO check
       allWinnableByCell[2].sort(coordsComparator);
       allForkable = allWinnableByCell[2].filter(filterUniqueCoords);
       return allForkable;
@@ -496,6 +492,8 @@ function TicTacToe() {
         commonCoords = tempCC;
       }
       return commonCoords;
+    } else if (coordsList.length === 1) {
+      return coordsList[0];
     }
   };
   var counterNextTurnForkMove = function (enemyAllWinnable, enemyAllNextTurnForkable) {
@@ -532,6 +530,33 @@ function TicTacToe() {
     }
 
   };
+  var counterForkMove = function (enemyAllWinnable, enemyAllForkable) { //TODO TO TEST
+    var forkableMovesLinesList = [];
+    var forkableMoveLine;
+    for (var i = 0; i < enemyAllForkable.length; i++) {
+      var curForkable = enemyAllForkable[i];
+      var counter = 1;
+      var forkableMoveLine = [];
+      for (var j = 0; j < enemyAllWinnable.byLine[curForkable.ID].length; j++) {
+        forkableMoveLine.push(enemyAllWinnable.byLine[curForkable.ID][j]);
+      }
+      while ((i + 1) < enemyAllForkable.length && isCoordsEqual(curForkable, enemyAllForkable[i + 1])) {
+        for (var j = 0; j < enemyAllWinnable.byLine[enemyAllForkable[i + 1].ID].length; j++) {
+          forkableMoveLine.push(enemyAllWinnable.byLine[enemyAllForkable[i + 1].ID][j]);
+        }
+        i++;
+        counter++;
+      }
+      if (counter > 2) {
+        return enemyAllForkable[i];
+      }
+      else {
+        forkableMovesLinesList.push(forkableMoveLine);
+      }
+    }
+    return getCommonCoords(forkableMovesLinesList);
+
+  };
   var getClosestMove = function (value) {
     var funArr = [
       checkWinnableHorizontal,
@@ -554,17 +579,20 @@ function TicTacToe() {
   var AIBestMove = function (selfValue, enemyValue) {
     var closestMove = getClosestMove(selfValue);
     if (closestMove && closestMove.missingSlots === 1) {
-      return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
+//      return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
+      return closestMove.coords[0];
     }
     var closestEnemyMove = getClosestMove(enemyValue);
     if (closestEnemyMove && closestEnemyMove.missingSlots === 1) {
-      return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
+//      return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
+      return closestEnemyMove.coords[0];
     }
     //    var allWinnable = getAllWinnable(expectedValue, 3, 2);//TODO unComment
     var allWinnable = getAllWinnable(selfValue, 3, 0);
     var allForkable = getForkMove(allWinnable.byCell);
     if (allForkable.length > 0) {
-      return {y: allForkable[0].y, x: allForkable[0].x};
+//      return {y: allForkable[0].y, x: allForkable[0].x};
+      return allForkable[0];
     }
     var enemyAllWinnable = getAllWinnable(enemyValue, 3, 0);
     var allNextTurnForkable = getNextTurnForkMove(allWinnable);
@@ -575,8 +603,14 @@ function TicTacToe() {
       }
     }
     var enemyAllForkable = getForkMove(enemyAllWinnable.byCell);
-    if (enemyAllForkable.length > 0) {//TODO watch for multiple fork
-      return {y: enemyAllForkable[0].y, x: enemyAllForkable[0].x};
+    if (enemyAllForkable.length > 2) {
+      var forkableCounter = counterForkMove(enemyAllWinnable, enemyAllForkable);//TODO check
+      if (forkableCounter.length > 0) {
+        return forkableCounter[0];
+      }
+    } else if (enemyAllForkable.length > 0) {
+//      return {y: enemyAllForkable[0].y, x: enemyAllForkable[0].x};
+      return enemyAllForkable[0];
     }
     var enemyAllNextTurnForkable = getNextTurnForkMove(enemyAllWinnable);
     if (enemyAllNextTurnForkable && enemyAllNextTurnForkable.length > 0) {
@@ -594,9 +628,11 @@ function TicTacToe() {
       }
     }
     if (closestMove) {
-      return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
+//      return {y: closestMove.coords[0].y, x: closestMove.coords[0].x};
+      return closestMove.coords[0];
     } else if (closestEnemyMove) {
-      return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
+//      return {y: closestEnemyMove.coords[0].y, x: closestEnemyMove.coords[0].x};
+      return closestEnemyMove.coords[0];
     } else {
       //TODO delete
       var isChosen = false;
