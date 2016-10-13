@@ -6,10 +6,10 @@
 
 
 function TicTacToe() {
-  var horizontalCellNumber = 6;
+  var horizontalCellNumber = 8;
 //  var verticalCellNumber = 6;
   var verticalCellNumber = horizontalCellNumber;
-  var cellInARowToWin = 4;
+  var cellInARowToWin = 5;
 //  var cellsEl = [//TODO gen from rows number
 //    [
 //      $("#cell1"),
@@ -62,6 +62,7 @@ function TicTacToe() {
   var buildGrid = function () { //TODO get in GUI
 //    var grid = $('<div class="grid"></div>');
     var grid = $('#grid');
+    grid.text(""); // empty grid before rebuilding
     var row = $('<div class="row"></div>');
     var cell = $('<div class="cell"></div>');
     cellsEl = [];
@@ -113,6 +114,23 @@ function TicTacToe() {
     } else {
       removeHint();
     }
+  };
+  var togglePlayer2AI = function () {
+    isPlayer2AI = !isPlayer2AI;
+  };
+  var togglePlayerValues = function () {
+    isPlayer1X = !isPlayer1X;
+  };
+  var loadParameters = function () {
+    var hor = $('#lineNumber');//TODO put in initial declarations
+    var vert = $('#columnNumber');
+    var inARow = $('#cellInARowToWin');
+    var player1X = $('#firstPlayerX');
+
+    horizontalCellNumber = hor.val();
+    verticalCellNumber = vert.val();
+    cellInARowToWin = inARow.val();
+    isPlayer1X = player1X.is(":checked");
   };
   var selectCell = function (cellX, cellY) {
     var curVal = getValues().cur;
@@ -231,7 +249,7 @@ function TicTacToe() {
   var getWinnableHorizontal = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory, minEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
-    var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var XEndingPoint = cellsVal[0].length - cellInARowToWin + 1;
     var YEndingPoint = cellsVal.length;
     var XCheckDirection = 1;
     var YCheckDirection = 0;
@@ -240,7 +258,7 @@ function TicTacToe() {
   var getWinnableVertical = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory, minEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
-    var XEndingPoint = cellsVal.length;
+    var XEndingPoint = cellsVal[0].length;
     var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
     var XCheckDirection = 0;
     var YCheckDirection = 1;
@@ -249,7 +267,7 @@ function TicTacToe() {
   var getWinnableDiagonalTopLeft = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory, minEpmtySlotsMemory) {
     var XStartingPoint = 0;
     var YStartingPoint = 0;
-    var XEndingPoint = cellsVal.length - cellInARowToWin + 1;
+    var XEndingPoint = cellsVal[0].length - cellInARowToWin + 1;
     var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
     var XCheckDirection = 1;
     var YCheckDirection = 1;
@@ -258,7 +276,7 @@ function TicTacToe() {
   var getWinnableDiagonalTopRight = function (expectedValue, lastLowestEmptySlotsNumber, maxEpmtySlotsMemory, minEpmtySlotsMemory) {
     var XStartingPoint = cellInARowToWin - 1;
     var YStartingPoint = 0;
-    var XEndingPoint = cellsVal.length;
+    var XEndingPoint = cellsVal[0].length;
     var YEndingPoint = cellsVal.length - cellInARowToWin + 1;
     var XCheckDirection = -1;
     var YCheckDirection = 1;
@@ -290,7 +308,7 @@ function TicTacToe() {
   };
   var isComplete = function () {
     for (var i = 0; i < cellsVal.length; i++) {
-      for (var j = 0; j < cellsVal.length; j++) {
+      for (var j = 0; j < cellsVal[0].length; j++) {
         if (cellsVal[i][j] === undefined) {
           return false;
         }
@@ -660,9 +678,9 @@ function TicTacToe() {
       //TODO delete
       var isChosen = false;
       for (var i = 0; i < cellsVal.length && !isChosen; i++) {
-        for (var j = 0; j < cellsVal.length && !isChosen; j++) {
-          if (cellsVal[j][i] === undefined) {
-            return {y: j, x: i};
+        for (var j = 0; j < cellsVal[i].length && !isChosen; j++) {
+          if (cellsVal[i][j] === undefined) {
+            return {y: i, x: j};
           }
         }
       } //TODO delete
@@ -734,8 +752,20 @@ function TicTacToe() {
     cleanCells();
     start();
   };
+  var reload = function () {
+    loadParameters();
+    buildGrid();
+    setCellListener();
+    swapFirstPlayer();
+    restart();
+
+  };
   $('#restartBtn').click(restart.bind(this)); //TODO delete
   $('#hintBtn').click(toggleHint.bind(this)); //TODO delete
+  $('#rebuild').click(reload.bind(this)); //TODO delete
+  $('#secondPlayerAI').click(togglePlayer2AI.bind(this)); //TODO delete
+//  $('#firstPlayerX').click(togglePlayerValues.bind(this)); //TODO delete
+  //
 //  $('#winnableXBtn').click(function () {
 //  });
 //  $('#winnableOBtn').click(function () {
