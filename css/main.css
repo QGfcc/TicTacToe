@@ -8,39 +8,100 @@ and open the template in the editor.
     Created on : 17-ao├╗t-2016, 21:39:31
     Author     : queni
 */
+/*$wonColor: rgba(150,150,255,1);*/
+/*.color-set-1, .color-set-1 * {*/
+.color-set-1, html {
+  color: white;
+  background-color: black; }
+
+/*.color-set-2, .color-set-2 * {*/
+.color-set-2, html button, html button *, html input, .scores .scoreLabel.currentPlayer, .well {
+  background-color: white;
+  color: black; }
+
 html {
   /*box-sizing: border-box;*/
-  box-sizing: content-box; }
+  box-sizing: content-box;
+  /*  background-color: $backgroundColor;
+    color: $mainColor;*/ }
+  html * {
+    color: inherit;
+    background-color: inherit; }
+  html button, html button *, html input {
+    /*color:$backgroundColor;*/ }
+  html input[type=number] {
+    width: 50px; }
+
+body {
+  /*background-color: $backgroundColor;*/ }
+
+.btn-group {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  /*background-color: $mainColor;*/ }
 
 .grid {
   margin: auto;
-  margin-top: 40px;
+  /*margin-top: 40px;*/
+  margin: 20px auto;
   display: table;
-  background-color: red; }
+  /*background-color: red;//TODO delete*/
+  color: white;
+  border: 5px solid white; }
 
 .row {
   display: table-row;
-  background-color: blue; }
+  /*background-color: blue;//TODO delete*/ }
 
 .cell {
   padding: 20px;
   /*padding: 10px;*/
   /*margin: 20px;*/
-  width: 80px;
-  height: 80px;
+  width: 82px;
+  height: 82px;
   text-align: center;
   vertical-align: middle;
   font-size: 200%;
   /*font-size: 50%;*/
   /*font-size: 400%;*/
+  border: 1px solid white;
   display: table-cell;
-  background-color: green; }
+  /*background-color: black;*/ }
   .cell .won {
     transition: color 1s;
-    color: red; }
+    color: #0064ff; }
   .cell .hint {
     transition: color 1s;
     /*color:blue;*/
-    color: rgba(0, 0, 0, 0.2); }
+    /*color: rgba(0,0,0,0.2);*/
+    color: rgba(255, 255, 255, 0.2); }
+
+.scores {
+  margin: 20px; }
+  .scores .scoreLabel {
+    display: inline-block;
+    padding: 0 10px;
+    border-radius: 5px; }
+    .scores .scoreLabel .score {
+      /*width: 30%;*/
+      /*  float: left;*/
+      /*padding: 0px 20px;*/
+      padding-left: 5px;
+      font-size: 150%; }
+    .scores .scoreLabel.currentPlayer {
+      /*background-color: $currentPlayerColor;*/
+      /*background-color: $wonColor;*/ }
+
+.well {
+  padding: 20px;
+  display: inline-block;
+  text-align: right; }
+
+/*#gameSettingsBtn {
+  @extend .color-set-1;
+}
+#gameSettingsBtn.collapsed {
+  @extend .color-set-2;
+}*/
 
 /*# sourceMappingURL=main.css.map */

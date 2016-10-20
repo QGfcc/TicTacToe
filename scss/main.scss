@@ -7,23 +7,65 @@ and open the template in the editor.
     Created on : 17-août-2016, 21:39:31
     Author     : queni
 */
+$backgroundColor: black;
+$mainColor: white;
+$hintColor: rgba(255,255,255,0.2);
+/*$wonColor: rgba(150,150,255,1);*/
+$wonColor: rgba(0,100,255,1);
+$currentPlayerColor: red;
 
+/*.color-set-1, .color-set-1 * {*/
+.color-set-1 {
+  color: $mainColor;
+  background-color: $backgroundColor;
+}
+/*.color-set-2, .color-set-2 * {*/
+.color-set-2 {
+  background-color: $mainColor;
+  color:$backgroundColor;
+}
 html {
   /*box-sizing: border-box;*/
   box-sizing: content-box;
+  /*  background-color: $backgroundColor;
+    color: $mainColor;*/
+  @extend .color-set-1;
+  *{
+    color: inherit;
+    background-color: inherit;
+  }
+  button, button *, input {
+    /*color:$backgroundColor;*/
+    @extend .color-set-2;
+  }
+  input[type=number]{
+    width: 50px;
+  }
+}
+body {
+  /*background-color: $backgroundColor;*/
+}
+.btn-group {
+  margin-top: 20px ;
+  margin-bottom: 10px;
+  /*background-color: $mainColor;*/
 }
 .grid {
   margin:auto;
-  margin-top: 40px;
+  /*margin-top: 40px;*/
+  margin: 20px auto;
   display: table;
-  background-color: red;//TODO delete
+  /*background-color: red;//TODO delete*/
+  color: white;
+  border: 5px solid $mainColor;;
 }
 .row {
   display: table-row;
-  background-color: blue;//TODO delete
+  /*background-color: blue;//TODO delete*/
 }
 .cell {
-  $cellSize: 80px;
+  $borderSize: 1px;
+  $cellSize: 80px + (2 * $borderSize);
   padding: 20px;
   /*padding: 10px;*/
   /*margin: 20px;*/
@@ -34,16 +76,50 @@ html {
   font-size: 200%;
   /*font-size: 50%;*/
   /*font-size: 400%;*/
-  
+  border: $borderSize solid $mainColor;
+
   display: table-cell;
-  background-color: green;//TODO delete
+  /*background-color: black;*/
   .won {
     transition: color 1s;
-    color:red;
+    color:$wonColor;
   }
   .hint {
     transition: color 1s;
     /*color:blue;*/
-    color: rgba(0,0,0,0.2);
+    /*color: rgba(0,0,0,0.2);*/
+    color: $hintColor;
   }
 }
+.scores {
+  margin: 20px;
+  .scoreLabel {
+    display: inline-block;
+    padding: 0 10px;
+    border-radius: 5px;
+    .score {
+      /*width: 30%;*/
+      /*  float: left;*/
+      /*padding: 0px 20px;*/
+      padding-left: 5px;
+      font-size: 150%;
+    }
+    &.currentPlayer {
+      /*background-color: $currentPlayerColor;*/
+      @extend .color-set-2;
+      /*background-color: $wonColor;*/
+    }
+  }
+}
+.well {
+  padding: 20px;
+  display: inline-block;
+  @extend .color-set-2;
+  text-align: right;
+}
+/*#gameSettingsBtn {
+  @extend .color-set-1;
+}
+#gameSettingsBtn.collapsed {
+  @extend .color-set-2;
+}*/

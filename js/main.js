@@ -56,8 +56,13 @@ function TicTacToe() {
 //  var isPlayer1AI = true;
 //  var isPlayer2AI = false;//TODO get in GUI
   var isPlayer2AI = true;
-  var isHinting = true; //TODO get in GUI //TODO set to false
+  var isHinting = false; //TODO get in GUI //TODO set to false
   var lastHint = undefined;
+  var scoreDraw = 0;
+  var scorePlayer1 = 0;
+  var scorePlayer2 = 0;
+  var endingTimeoutDuration = 1500;
+
 
   var buildGrid = function () { //TODO get in GUI
 //    var grid = $('<div class="grid"></div>');
@@ -695,8 +700,29 @@ function TicTacToe() {
     var bestMove = AIBestMove(selfValue, enemyValue);
     displayHint(bestMove.y, bestMove.x, selfValue);
   };
+  var updateScores = function (isDraw) {
+    if (isDraw) {
+      scoreDraw++;
+      $('#scoreDraw').text(scoreDraw);
+    } else if (isPlayer1Playing) {
+      scorePlayer1++;
+      $('#scorePlayer1').text(scorePlayer1);
+    } else {
+      scorePlayer2++;
+      $('#scorePlayer2').text(scorePlayer2);
+    }
+  };
+  var resetScores = function () { //TODO get in GUI
+    scoreDraw = 0;
+    $('#scoreDraw').text(scoreDraw);
+    scorePlayer1 = 0;
+    $('#scorePlayer1').text(scorePlayer1);
+    scorePlayer2 = 0;
+    $('#scorePlayer2').text(scorePlayer2);
+  };
   var endingAnimation = function (endResults) {
     if (endResults === true) { //endResults not an array: board complete
+      updateScores(true);
     } else {
       for (var i = 0; i < endResults.length; i++) {
         var tempObj = endResults[i];
@@ -705,17 +731,32 @@ function TicTacToe() {
           cellsEl[tempObj.coords[j].y][tempObj.coords[j].x].children().addClass("won");
         }
       }
+      updateScores(false);
     }
   };
   var swapFirstPlayer = function () {
     isPlayer1FirstPlayer = !isPlayer1FirstPlayer;
   };
+  var swapPlayerIndicator = function () {
+    if (isPlayer1Playing) {
+      $('.scoreLabel:first-child').addClass('currentPlayer');
+      $('.scoreLabel:last-child').removeClass('currentPlayer');
+//      $('.scoreLabel:first-child').addClass('currentPlayer btn');
+//      $('.scoreLabel:last-child').removeClass('currentPlayer btn');
+    } else {
+      $('.scoreLabel:first-child').removeClass('currentPlayer ');
+      $('.scoreLabel:last-child').addClass('currentPlayer');
+//      $('.scoreLabel:first-child').removeClass('currentPlayer btn');
+//      $('.scoreLabel:last-child').addClass('currentPlayer btn');
+    }
+  };
   var swapPlayer = function () {
     isPlayer1Playing = !isPlayer1Playing;
+    swapPlayerIndicator();
   };
   var ending = function (endResults) {
     endingAnimation(endResults);
-    window.setTimeout(restart, 2000);
+    window.setTimeout(restart, endingTimeoutDuration);
   };
   var getValues = function () {
     if ((isPlayer1Playing && isPlayer1X) || ((!isPlayer1Playing) && (!isPlayer1X))) {
@@ -763,25 +804,10 @@ function TicTacToe() {
   $('#restartBtn').click(restart.bind(this)); //TODO delete
   $('#hintBtn').click(toggleHint.bind(this)); //TODO delete
   $('#rebuild').click(reload.bind(this)); //TODO delete
-  $('#secondPlayerAI').click(togglePlayer2AI.bind(this)); //TODO delete
-//  $('#firstPlayerX').click(togglePlayerValues.bind(this)); //TODO delete
-  //
-//  $('#winnableXBtn').click(function () {
-//  });
-//  $('#winnableOBtn').click(function () {
-//  });
-//  $('#forkOBtn').click(function () {
-//    console.log(getForkMove("o")); //TODO delete
-//  });
-//  $('#forkXBtn').click(function () {
-//    console.log(getForkMove("x")); //TODO delete
-//  });
-//  $('#forkNTOBtn').click(function () {
-//    console.log(getNextTurnForkMove("o")); //TODO delete
-//  });
-//  $('#forkNTXBtn').click(function () {
-//    console.log(getNextTurnForkMove("x")); //TODO delete
-//  });
+  $('#secondPlayerAI').click(togglePlayer2AI.bind(this));
+  $('#resetScoreBtn').click(resetScores.bind(this));
+  loadParameters();
+  resetScores();
   buildGrid();
   setCellListener();
   swapFirstPlayer();//routine will swap it again => get the right first player
