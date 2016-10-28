@@ -43,12 +43,10 @@ function TicTacToe() {
   var cellsEl;
   var cellsVal;
 
-//  var glyphiconX = "glyphicon glyphicon-remove";
-//  var iconX = '<span class="glyphicon glyphicon-remove"></span>';
-  var iconX = $('<span class="glyphicon glyphicon-remove"></span>');
-//  var glyphiconO = "fa fa-circle-o";
-//  var iconO = '<i class="fa fa-circle-o"></i>';
-  var iconO = $('<i class="fa fa-circle-o"></i>');
+//  var iconX = $('<span class="glyphicon glyphicon-remove"></span>');
+//  var iconO = $('<i class="fa fa-circle-o"></i>');
+  var iconX = $('<span class="value">X</span>');
+  var iconO = $('<span class="value">O</span>');
   var isPlayer1FirstPlayer = true;
   var isPlayer1Playing = true;
   var isPlayer1X = false; //TODO get in GUI
@@ -122,6 +120,10 @@ function TicTacToe() {
   };
   var togglePlayer2AI = function () {
     isPlayer2AI = !isPlayer2AI;
+    var values = getValues();
+    if (!isAUserPlaying()) {
+      AIPlays(values.cur, values.next);
+    }
   };
   var togglePlayerValues = function () {
     isPlayer1X = !isPlayer1X;
@@ -130,12 +132,17 @@ function TicTacToe() {
     var hor = $('#lineNumber');//TODO put in initial declarations
     var vert = $('#columnNumber');
     var inARow = $('#cellInARowToWin');
-    var player1X = $('#firstPlayerX');
+//    var player1X = $('#firstPlayerX');
+//    var player1X = $('#firstPlayerX:checked');
+    var player1X = $('input[name=firstPlayerX]:checked');
+    player1X.parents().addClass("active"); //in case the browser override the html checkings(remember the last checkings)
+//    var player1X = $('input[name=firstPlayerX]:checked');
 
     horizontalCellNumber = hor.val();
     verticalCellNumber = vert.val();
     cellInARowToWin = inARow.val();
-    isPlayer1X = player1X.is(":checked");
+//    isPlayer1X = player1X.is(":checked");
+    isPlayer1X = !!player1X.val();
   };
   var selectCell = function (cellX, cellY) {
     var curVal = getValues().cur;
